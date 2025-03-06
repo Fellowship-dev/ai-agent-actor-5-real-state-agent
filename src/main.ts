@@ -4,7 +4,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { createToolCallingAgent, AgentExecutor } from "langchain/agents";
 import { ChatOpenAI } from "@langchain/openai";
 import { StructuredToolInterface } from '@langchain/core/tools';
-import magicTool from './tools/magictool.js';
+import MagicTool from "./tools/magictool.js";
 
 // if available, .env variables are loaded
 dotenv.config()
@@ -53,11 +53,13 @@ const apifyClient = new ApifyClient({
   token: userToken,
 });
 
+// Tools are initialized to be passed to the agent
+const magicTool = new MagicTool({ log })
 const tools: StructuredToolInterface[] = [
   magicTool,
 ]
-log.debug(`Using model: ${modelName}`);
 
+log.debug(`Using model: ${modelName}`);
 const llm = new ChatOpenAI({
   model: modelName,
   apiKey: openaiApiKey,
