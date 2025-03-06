@@ -1,0 +1,34 @@
+{
+  "name": "ai-real-state-agent",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "This is an example of a Crawlee project.",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.3.42",
+    "@langchain/langgraph": "^0.2.54",
+    "@langchain/openai": "^0.4.4",
+    "apify": "^3.3.2",
+    "dotenv": "^16.4.7",
+    "langchain": "^0.3.19",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@apify/tsconfig": "^0.1.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.21.0",
+    "tsx": "^4.4.0",
+    "typescript": "~5.8.0"
+  },
+  "scripts": {
+    "start": "npm run start:dev",
+    "start:prod": "node dist/main.js",
+    "start:dev": "tsx src/main.ts",
+    "build": "tsc",
+    "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1"
+  },
+  "author": "It's not you it's me",
+  "license": "ISC"
+}
