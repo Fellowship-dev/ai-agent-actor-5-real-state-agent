@@ -4,7 +4,8 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { createToolCallingAgent, AgentExecutor } from "langchain/agents";
 import { ChatOpenAI } from "@langchain/openai";
 import { StructuredToolInterface } from '@langchain/core/tools';
-import MagicTool from "./tools/magictool.js";
+import ZillowSearch from "./tools/zillow_search.js";
+import ZipCodeSearch from "./tools/zip_code_search.js";
 
 // if available, .env variables are loaded
 dotenv.config()
@@ -54,9 +55,11 @@ const apifyClient = new ApifyClient({
 });
 
 // Tools are initialized to be passed to the agent
-const magicTool = new MagicTool({ log })
+const zillowSearch = new ZillowSearch({ apifyClient, log })
+const zipCodeSearch = new ZipCodeSearch({ log })
 const tools: StructuredToolInterface[] = [
-  magicTool,
+  zillowSearch,
+  zipCodeSearch,
 ]
 
 log.debug(`Using model: ${modelName}`);
@@ -66,7 +69,23 @@ const llm = new ChatOpenAI({
 });
 
 const prompt = ChatPromptTemplate.fromMessages([
-  ["system", "You are a helpful assistant"],
+  ["system",
+    "You are a experienced real state agent that wants to help the user to find the perfect home. " +
+    "The user will ask you for advice regarding a specific city in the US. " +
+    "If the user does not provide a state (like CA or NY), try to guess to which state a city belongs to. " +
+    "If the user does not provide a state, try to guess to which state a city belongs to. " +
+    "If from the input you cannot get a city and a state or you think that the city is not in US territory, end the conversation and help the user with the input. " +
+    "Make sure to convert the state to a two-letter ISO standard. For example, if the user says 'New York', store it as 'NY' before using it. " +
+    "Using the Zip Codes that belong to the selected city, search on Zillow for properties that match the user requirements. " +
+    "Only select one random zip code from the list. " + // DEBUG
+    "The user must specify if he or she is looking to rent or buy a property (default to rent if the information is not given). " +
+    "The user can specify if the ideal property has a minimum value (default to 1 if the information is not given). " +
+    "The user can specify if the ideal property has a maximum value (default to 1000 if the information is not given). " +
+    "Inform the user of the assumptions you make before delivering any results. " +
+    "Based on the results, use your expertise to recommend the best 5 properties that you found. " +
+    "Make sure that you show the address, price and a link to view more information about the chosen properties. " +
+    "At the end, please explain why you chose those properties. "
+  ],
   ["placeholder", "{chat_history}"],
   ["human", "{input}"],
   ["placeholder", "{agent_scratchpad}"],
@@ -81,6 +100,8 @@ const agent = createToolCallingAgent({
 const agentExecutor = new AgentExecutor({
   agent,
   tools,
+  verbose: false,
+  maxIterations: 3,
 });
 
 const response = await agentExecutor.invoke({ input: instructions });

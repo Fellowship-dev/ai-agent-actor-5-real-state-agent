@@ -10,7 +10,7 @@ export interface MagicToolParams {
 }
 
 /**
- * Tool that uses the MagicTool function
+ * Tool that uses the MagicTool function. This is an example function to use as template.
  */
 export class MagicTool extends Tool {
   static override lc_name() {

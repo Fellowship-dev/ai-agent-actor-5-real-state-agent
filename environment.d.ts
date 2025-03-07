@@ -7,6 +7,7 @@ declare global {
       LANGSMITH_API_KEY: string;
       LANGSMITH_PROJECT: string;
       OPENAI_API_KEY: string;
+      ZIP_API_KEY: string;
       NODE_ENV: 'development' | 'production';
     }
   }
