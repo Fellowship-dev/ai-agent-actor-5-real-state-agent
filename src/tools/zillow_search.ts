@@ -17,9 +17,9 @@ export class ZillowSearch extends StructuredTool {
   protected log: Log | Console;
   protected apifyClient: ApifyClient;
 
-  name = "zillow_search";
+  name = 'zillow_search';
 
-  description = "Searches for properties on Zillow based on a list of Zip Codes (at least one) and returns a stringified JSON with the results."
+  description = 'Searches for properties on Zillow based on a list of Zip Codes (at least one) and returns a stringified JSON with the results.';
 
   schema = z.object({
     zipCodes: z.string().array(),
@@ -32,23 +32,29 @@ export class ZillowSearch extends StructuredTool {
     super(...arguments);
     const log = fields?.log ?? console;
     this.log = log;
-    const apifyClient = fields?.apifyClient ?? new ApifyClient();;
+    const apifyClient = fields?.apifyClient ?? new ApifyClient();
     this.apifyClient = apifyClient;
   }
 
   override async _call(arg: z.output<typeof this.schema>) {
     const actorInput = {
-      "forRent": arg.forRent,
-      "forSaleByAgent": true,
-      "forSaleByOwner": true,
-      "priceMax": arg.maximumPrice,
-      "priceMin": arg.minimumPrice,
-      "sold": false,
-      "zipCodes": arg.zipCodes,
-    }
-    this.log.debug(`Calling ZillowSearch with input: ${JSON.stringify(actorInput)}`);
-    const actorRun = await this.apifyClient.actor('maxcopell/zillow-zip-search').call(actorInput)
-    const dataset = await this.apifyClient.dataset(actorRun.defaultDatasetId).listItems()
+      forRent: arg.forRent,
+      forSaleByAgent: true,
+      forSaleByOwner: true,
+      priceMax: arg.maximumPrice,
+      priceMin: arg.minimumPrice,
+      sold: false,
+      zipCodes: arg.zipCodes,
+    };
+    this.log.debug(
+      `Calling ZillowSearch with input: ${JSON.stringify(actorInput)}`
+    );
+    const actorRun = await this.apifyClient
+      .actor('maxcopell/zillow-zip-search')
+      .call(actorInput);
+    const dataset = await this.apifyClient
+      .dataset(actorRun.defaultDatasetId)
+      .listItems();
     const items = dataset.items.slice(0, 10); // return only the top 10 properties to avoid sending too much data
     this.log.debug(`ZillowSearch response: ${JSON.stringify(items)}`);
     return JSON.stringify(items);

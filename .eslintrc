@@ -1,5 +1,5 @@
 {
-  "root": true,
+  "root": false,
   "env": {
     "browser": true,
     "es2020": true,
@@ -16,5 +16,11 @@
     "node_modules",
     "dist",
     "**/*.d.ts"
-  ]
+  ],
+  "rules": {
+    "indent": ["error", 2],
+    "comma-dangle": ["off", 0],
+    "prefer-rest-params": ["off", 0],
+    "max-len": ["error", { "ignoreComments": true, "ignoreStrings": true, "ignoreUrls": true }]
+  }
 }

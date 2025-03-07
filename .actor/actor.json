@@ -1,0 +1,12 @@
+{
+	"actorSpecification": 1,
+	"name": "ai-real-state-agent",
+	"title": "Empty TypeScript project",
+	"description": "Empty project in TypeScript.",
+	"version": "0.0",
+	"buildTag": "latest",
+	"meta": {
+		"templateId": "ts-empty"
+	},
+	"dockerfile": "./Dockerfile"
+}

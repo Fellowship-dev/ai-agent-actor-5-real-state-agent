@@ -17,13 +17,13 @@ export class DuckDuckGo extends StructuredTool {
   protected log: Log | Console;
   protected apifyClient: ApifyClient;
 
-  name = "duck_duck_go";
+  name = 'duck_duck_go';
 
-  description = "Performs a search on the search engine DuckDuckGo and returns a stringified JSON with the results."
+  description = 'Performs a search on the search engine DuckDuckGo and returns a stringified JSON with the results.';
 
   schema = z.object({
     keywords: z.string(),
-    locale: z.enum(["us-en", "uk-en", "cz-cs", "cl-es"]) || undefined,
+    locale: z.enum(['us-en', 'uk-en', 'cz-cs', 'cl-es']) || undefined,
     maximum: z.number() || undefined,
   });
 
@@ -31,34 +31,40 @@ export class DuckDuckGo extends StructuredTool {
     super(...arguments);
     const log = fields?.log ?? console;
     this.log = log;
-    const apifyClient = fields?.apifyClient ?? new ApifyClient();;
+    const apifyClient = fields?.apifyClient ?? new ApifyClient();
     this.apifyClient = apifyClient;
   }
 
   override async _call(arg: z.output<typeof this.schema>) {
     const actorInput = {
-      "keywords": arg.keywords,
-      "proxy": {
-        "useApifyProxy": true,
-        "apifyProxyGroups": [
-          "RESIDENTIAL"
+      keywords: arg.keywords,
+      proxy: {
+        useApifyProxy: true,
+        apifyProxyGroups: [
+          'RESIDENTIAL'
         ],
-        "apifyProxyCountry": "US"
+        apifyProxyCountry: 'US'
       },
-      "locale": arg.locale ?? "us-en",
-      "operation": "st",
-      "safe": "Partial",
-      "daterange": "all",
-      "img_type": "all",
-      "img_size": "all",
-      "vid_duration": "all",
-      "maximum": arg.maximum ?? 5,
-      "timeout": 30
-    }
-    this.log.debug(`Calling DuckDuckGo with input: ${JSON.stringify(actorInput)}`);
-    const actorRun = await this.apifyClient.actor('canadesk/duckduckgo-serp-api').call(actorInput)
-    const dataset = await this.apifyClient.dataset(actorRun.defaultDatasetId).listItems()
-    const items = dataset.items
+      locale: arg.locale ?? 'us-en',
+      operation: 'st',
+      safe: 'Partial',
+      daterange: 'all',
+      img_type: 'all',
+      img_size: 'all',
+      vid_duration: 'all',
+      maximum: arg.maximum ?? 5,
+      timeout: 30
+    };
+    this.log.debug(
+      `Calling DuckDuckGo with input: ${JSON.stringify(actorInput)}`
+    );
+    const actorRun = await this.apifyClient
+      .actor('canadesk/duckduckgo-serp-api')
+      .call(actorInput);
+    const dataset = await this.apifyClient
+      .dataset(actorRun.defaultDatasetId)
+      .listItems();
+    const { items } = dataset;
     this.log.debug(`DuckDuckGo response: ${JSON.stringify(items)}`);
     return JSON.stringify(items);
   }

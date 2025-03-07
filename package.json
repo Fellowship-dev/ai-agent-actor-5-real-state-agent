@@ -16,17 +16,24 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@apify/eslint-config-ts": "^0.3.0",
     "@apify/tsconfig": "^0.1.0",
+    "@eslint/js": "^9.21.0",
     "@types/node": "^22.0.0",
-    "eslint": "^9.21.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.1",
+    "globals": "^16.0.0",
     "tsx": "^4.4.0",
-    "typescript": "~5.8.0"
+    "typescript": "~5.5.0",
+    "typescript-eslint": "^8.26.0"
   },
   "scripts": {
     "start": "npm run start:dev",
     "start:prod": "node dist/main.js",
     "start:dev": "tsx src/main.ts",
     "build": "tsc",
+    "lint": "eslint src",
     "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1"
   },
   "author": "It's not you it's me",

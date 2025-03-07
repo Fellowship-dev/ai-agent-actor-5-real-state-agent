@@ -4,8 +4,9 @@ tasks:
     init: >
       nvm use lts/jod &&
       npm install -g npm@11 &&
+      npm install -g eslint@^8.50.0 &&
       npm install -g apify-cli
-    command: echo "Login to apify, export your APIFY_TOKEN, create an INPUT.json file and run npm start!"
+    command: echo "Login to apify to get an API Key, export your APIFY_TOKEN, create an INPUT.json file and run npm start!"
   - name: config
     before: >
       (([[ ! -z $GITCONFIG ]] &&

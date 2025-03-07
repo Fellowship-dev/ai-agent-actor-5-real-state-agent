@@ -14,15 +14,15 @@ export interface MagicToolParams {
  */
 export class MagicTool extends Tool {
   static override lc_name() {
-    return "MagicTool";
+    return 'MagicTool';
   }
 
   protected log: Log | Console;
   protected apiKey: string;
 
-  name = "magic_function";
+  name = 'magic_function';
 
-  description = "Applies a magic function to an input."
+  description = 'Applies a magic function to an input.';
 
   constructor(fields?: MagicToolParams) {
     super(...arguments);
@@ -30,7 +30,7 @@ export class MagicTool extends Tool {
     const apiKey = fields?.apiKey ?? process.env.SECRET_API_KEY ?? '';
     if (apiKey === undefined) {
       log.debug(
-        `Secret API key not set. You can set it as "SECRET_API_KEY" in your environment variables.`
+        "Secret API key not set. You can set it as 'SECRET_API_KEY' in your environment variables."
       );
     }
     this.apiKey = apiKey;
@@ -39,7 +39,7 @@ export class MagicTool extends Tool {
 
   async _call(rawInput: string) {
     this.log.debug(`rawInput: ${rawInput}`);
-    const number = parseInt(rawInput);
+    const number = parseInt(rawInput, 10);
     return `${number + 2}`;
   }
 }
