@@ -46,10 +46,10 @@ export class ZipCodeSearch extends StructuredTool {
 
   override async _call(arg: z.output<typeof this.schema>) {
     const serviceUrl = this.buildUrl(arg.city, arg.state);
-    // this.log.debug(`ZIP Code Search service URL: ${serviceUrl}`);
+    this.log.debug(`Calling ZipCodeSearch with city='${arg.city}' and state='${arg.state}'`);
     const resp = await fetch(serviceUrl);
     const json = await resp.json();
-    // this.log.debug(`ZIP Code Search response: ${JSON.stringify(json)}`);
+    this.log.debug(`ZipCodeSearch response: ${JSON.stringify(json)}`);
     const zip_codes = (json["zip_codes"] || []).join(', ')
     return zip_codes;
   }

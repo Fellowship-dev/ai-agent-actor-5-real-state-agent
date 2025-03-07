@@ -19,7 +19,7 @@ export class ZillowSearch extends StructuredTool {
 
   name = "zillow_search";
 
-  description = "Searches for properties on Zillow and returns a stringified JSON with the results."
+  description = "Searches for properties on Zillow based on a list of Zip Codes (at least one) and returns a stringified JSON with the results."
 
   schema = z.object({
     zipCodes: z.string().array(),
@@ -46,11 +46,11 @@ export class ZillowSearch extends StructuredTool {
       "sold": false,
       "zipCodes": arg.zipCodes,
     }
-    // this.log.debug(`Zillow Search input: ${JSON.stringify(actorInput)}`);
+    this.log.debug(`Calling ZillowSearch with input: ${JSON.stringify(actorInput)}`);
     const actorRun = await this.apifyClient.actor('maxcopell/zillow-zip-search').call(actorInput)
     const dataset = await this.apifyClient.dataset(actorRun.defaultDatasetId).listItems()
     const items = dataset.items.slice(0, 10); // return only the top 10 properties to avoid sending too much data
-    this.log.debug(`Zillow Search input: ${JSON.stringify(items)}`);
+    this.log.debug(`ZillowSearch response: ${JSON.stringify(items)}`);
     return JSON.stringify(items);
   }
 }
