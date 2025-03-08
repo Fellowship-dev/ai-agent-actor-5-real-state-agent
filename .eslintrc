@@ -21,6 +21,6 @@
     "indent": ["error", 2],
     "comma-dangle": ["off", 0],
     "prefer-rest-params": ["off", 0],
-    "max-len": ["error", { "ignoreComments": true, "ignoreStrings": true, "ignoreUrls": true }]
+    "max-len": ["error", { "ignoreComments": true, "ignoreStrings": true, "ignoreUrls": true, "ignoreTemplateLiterals": true }]
   }
 }
