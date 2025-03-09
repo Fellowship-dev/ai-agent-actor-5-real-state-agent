@@ -6,6 +6,7 @@ import { StructuredToolInterface } from '@langchain/core/tools';
 import DuckDuckGo from '../tools/duck_duck_go.js';
 import WebsiteScraper from '../tools/website_scraper.js';
 // import ZipCodeSearch from '../tools/zip_code_search.js';
+import { CostHandler } from '../utils/cost_handler.js';
 
 /**
  * Interface for parameters required by LocationExpertAgent class.
@@ -24,13 +25,19 @@ export class LocationExpertAgent {
   protected log: Log | Console;
   protected apifyClient: ApifyClient;
   public agentExecutor: AgentExecutor;
+  public costHandler: CostHandler;
 
   constructor(fields?: LocationExpertAgentParams) {
     this.log = fields?.log ?? console;
     this.apifyClient = fields?.apifyClient ?? new ApifyClient();
+    this.costHandler = new CostHandler(fields?.modelName ?? 'gpt-4o-mini');
     const llm = new ChatOpenAI({
       model: fields?.modelName,
       apiKey: fields?.openaiApiKey,
+      temperature: 0,
+      callbacks: [
+        this.costHandler,
+      ],
     });
     const tools = this.buildTools(this.apifyClient, this.log);
     const prompt = this.buildPrompt();

@@ -4,6 +4,7 @@ import { createToolCallingAgent, AgentExecutor } from 'langchain/agents';
 import { ChatOpenAI } from '@langchain/openai';
 import { StructuredToolInterface } from '@langchain/core/tools';
 import ZillowSearch from '../tools/zillow_search.js';
+import { CostHandler } from '../utils/cost_handler.js';
 
 /**
  * Interface for parameters required by ResearcherAgent class.
@@ -22,13 +23,19 @@ export class ResearcherAgent {
   protected log: Log | Console;
   protected apifyClient: ApifyClient;
   public agentExecutor: AgentExecutor;
+  public costHandler: CostHandler;
 
   constructor(fields?: ResearcherAgentParams) {
     this.log = fields?.log ?? console;
     this.apifyClient = fields?.apifyClient ?? new ApifyClient();
+    this.costHandler = new CostHandler(fields?.modelName ?? 'gpt-4o-mini');
     const llm = new ChatOpenAI({
       model: fields?.modelName,
       apiKey: fields?.openaiApiKey,
+      temperature: 0,
+      callbacks: [
+        this.costHandler,
+      ],
     });
     const tools = this.buildTools(this.apifyClient, this.log);
     const prompt = this.buildPrompt();

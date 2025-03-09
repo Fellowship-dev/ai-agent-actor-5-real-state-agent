@@ -84,9 +84,11 @@ async function locationExpert(state: StateSchema) {
     openaiApiKey,
     log,
   });
-  const { agentExecutor } = locationExpertAgent;
+  const { agentExecutor, costHandler } = locationExpertAgent;
   const response = await agentExecutor.invoke({ input: state.instructions });
   log.info(`locationExpert 🤖 : ${response.output}`);
+  const costs = costHandler.getTotalCost();
+  log.info(`Agent finished its work.`, { costUSD: costs.usd, tokens: costs.tokens });
   return { bestLocations: response.output };
 }
 
@@ -98,7 +100,7 @@ async function researcher(state: StateSchema) {
     openaiApiKey,
     log,
   });
-  const { agentExecutor } = researcherAgent;
+  const { agentExecutor, costHandler } = researcherAgent;
   const input = 'The user asked sent this exact query:\n\n'
     + `'${state.instructions}'\n\n`
     + 'You asked someone for help to get the best locations in that city and state. '
@@ -106,7 +108,9 @@ async function researcher(state: StateSchema) {
     + `'${state.bestLocations}'\n\n`
     + 'Please answer the user accordingly.';
   const response = await agentExecutor.invoke({ input });
-  return { ...state, output: response.output };
+  const costs = costHandler.getTotalCost();
+  log.info(`Agent finished its work.`, { costUSD: costs.usd, tokens: costs.tokens });
+  return { output: response.output };
 }
 
 const graph = new StateGraph({ channels: graphState })
