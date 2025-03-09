@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
 import { Actor, ApifyClient, log } from 'apify';
+import { StateGraph, StateGraphArgs, START, END } from '@langchain/langgraph';
+import LocationExpertAgent from './agents/location_expert.js';
 import ResearcherAgent from './agents/researcher.js';
 
 // if available, .env variables are loaded
@@ -45,16 +47,80 @@ const apifyClient = new ApifyClient({
   token: userToken,
 });
 
-// The researcher agent gets initialized
-const researcherAgent = new ResearcherAgent({
-  apifyClient,
-  modelName,
-  openaiApiKey,
-  log,
-});
+/**
+ * LangGraph StateGraph schema
+ */
+type StateSchema = {
+  instructions: string;
+  bestLocations: string;
+  recommendations: string[];
+  output: string;
+}
 
-const { agentExecutor } = researcherAgent;
-const response = await agentExecutor.invoke({ input: instructions });
+const graphState: StateGraphArgs<StateSchema>['channels'] = {
+  instructions: {
+    value: (x?: string, y?: string) => y ?? x ?? '',
+    default: () => instructions,
+  },
+  bestLocations: {
+    value: (x?: string, y?: string) => y ?? x ?? '',
+    default: () => '',
+  },
+  recommendations: {
+    value: (x?: string[], y?: string[]) => y ?? x ?? [],
+    default: () => [],
+  },
+  output: {
+    value: (x?: string, y?: string) => y ?? x ?? '',
+    default: () => '',
+  },
+};
+
+async function locationExpert(state: StateSchema) {
+  // The researcher agent gets initialized
+  const locationExpertAgent = new LocationExpertAgent({
+    apifyClient,
+    modelName,
+    openaiApiKey,
+    log,
+  });
+  const { agentExecutor } = locationExpertAgent;
+  const response = await agentExecutor.invoke({ input: state.instructions });
+  log.info(`locationExpert 🤖 : ${response.output}`);
+  return { bestLocations: response.output };
+}
+
+async function researcher(state: StateSchema) {
+  // The researcher agent gets initialized
+  const researcherAgent = new ResearcherAgent({
+    apifyClient,
+    modelName,
+    openaiApiKey,
+    log,
+  });
+  const { agentExecutor } = researcherAgent;
+  const input = 'The user asked sent this exact query:\n\n'
+    + `'${state.instructions}'\n\n`
+    + 'You asked someone for help to get the best locations in that city and state. '
+    + 'The answer you received was this:\n\n'
+    + `'${state.bestLocations}'\n\n`
+    + 'Please answer the user accordingly.';
+  const response = await agentExecutor.invoke({ input });
+  return { ...state, output: response.output };
+}
+
+const graph = new StateGraph({ channels: graphState })
+  .addNode('location_expert', locationExpert)
+  .addNode('researcher', researcher)
+  .addEdge(START, 'location_expert')
+  .addEdge('location_expert', 'researcher')
+  .addEdge('researcher', END);
+
+const runnable = graph.compile();
+const response = await runnable.invoke(
+  { input: instructions },
+  { configurable: { thread_id: 42 } }, // this line shows that the agent can be thread-aware
+);
 
 log.info(`Agent 🤖 : ${response.output}`);
 
