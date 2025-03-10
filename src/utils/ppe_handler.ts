@@ -40,7 +40,7 @@ export async function chargeForActorStart() {
       .getChargedEventCount(PPE_EVENT.ACTOR_START_GB) === 0
   ) {
     const count = Math.ceil((Actor.getEnv().memoryMbytes || 1024) / 1024);
-    await Actor.charge({ eventName: 'actor-start-gb', count });
+    await Actor.charge({ eventName: PPE_EVENT.ACTOR_START_GB, count });
   }
 }
 
