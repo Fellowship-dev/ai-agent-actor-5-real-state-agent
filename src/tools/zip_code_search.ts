@@ -1,6 +1,7 @@
 import { Log } from 'apify';
 import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
+import { chargeForToolUsage } from '../utils/ppe_handler.js';
 
 /**
  * Interface for parameters required by ZipCodeSearch class.
@@ -28,15 +29,14 @@ export class ZipCodeSearch extends StructuredTool {
 
   constructor(fields?: ZipCodeSearchParams) {
     super(...arguments);
-    const log = fields?.log ?? console;
+    this.log = fields?.log ?? console;
     const apiKey = fields?.apiKey ?? process.env.ZIP_API_KEY ?? '';
     if (apiKey === undefined) {
-      log.debug(
+      this.log.debug(
         "Secret API key not set. You can set it as 'ZIP_API_KEY' in your environment variables."
       );
     }
     this.apiKey = apiKey;
-    this.log = log;
   }
 
   protected buildUrl = (city: string, state: string): string => {
@@ -52,6 +52,7 @@ export class ZipCodeSearch extends StructuredTool {
     const resp = await fetch(serviceUrl);
     const json = await resp.json();
     this.log.debug(`ZipCodeSearch response: ${JSON.stringify(json)}`);
+    await chargeForToolUsage(this.name, 1);
     const zipCodes = (json.zip_codes || []).join(', ');
     return zipCodes;
   }

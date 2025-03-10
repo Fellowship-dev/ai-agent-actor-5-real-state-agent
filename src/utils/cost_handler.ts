@@ -1,9 +1,8 @@
-import { log } from 'apify';
+import { Log } from 'apify';
 import { BaseTracer } from 'langchain/callbacks';
 import { Run } from '@langchain/core/tracers/tracer_langchain';
 import { GPT_MODEL_LIST, OpenaiAPICost } from './openai_models.js';
-
-const openAiCostLog = log.child({ prefix: 'OpenAI' });
+import { chargeForModelTokens } from './ppe_handler.js';
 
 interface TotalCost {
   usd: number;
@@ -13,13 +12,15 @@ interface TotalCost {
 }
 
 export class CostHandler extends BaseTracer {
+  protected log: Log | Console;
   name: string;
   modelName: string;
   modelCost: OpenaiAPICost;
   totalCost: TotalCost;
 
-  constructor(modelName: string) {
+  constructor(modelName: string, log?: Log | Console) {
     super();
+    this.log = log ?? console;
     this.name = 'cost_handler';
     this.modelName = modelName;
     this.modelCost = GPT_MODEL_LIST[this.modelName].cost;
@@ -50,12 +51,12 @@ export class CostHandler extends BaseTracer {
         * (tokenUsage.completionTokens / 1000);
       const callCostUSD = inputCostsUSD + outputCostsUSD;
       this.totalCost.usd += inputCostsUSD + outputCostsUSD;
-      this.totalCost.inputTokens = tokenUsage.promptTokens;
-      this.totalCost.outputTokens = tokenUsage.completionTokens;
+      this.totalCost.inputTokens += tokenUsage.promptTokens;
+      this.totalCost.outputTokens += tokenUsage.completionTokens;
       this.totalCost.totalModelCalls++;
       const durationSecs = run.end_time && run.start_time
         && (run.end_time - run.start_time) / 1000;
-      openAiCostLog.info(`LLM model call processed`,
+      this.log.debug(`LLM model call processed`,
         {
           durationSecs,
           callCostUSD,
@@ -64,15 +65,26 @@ export class CostHandler extends BaseTracer {
           outputTokens: this.totalCost.outputTokens,
         }
       );
-      openAiCostLog.debug(`LLM model call details`, { run });
     }
   }
 
   override onLLMStart(run: Run) {
-    openAiCostLog.debug(`Calling LLM model`, run);
+    this.log.debug(`Calling LLM model`, run);
   }
 
   getTotalCost() {
     return this.totalCost;
+  }
+
+  async logOrChargeForTokens(modelName: string, tokenCostActive: boolean) {
+    const costs = this.totalCost;
+    if (tokenCostActive) {
+      const tokens = costs.inputTokens + costs.outputTokens;
+      const tokensCost = this.modelCost.output * (tokens / 1000);
+      this.log.info(`Total tokens processed: ${tokens}. Usage cost: ${tokensCost}`);
+      await chargeForModelTokens(modelName, tokens);
+    } else {
+      this.log.info(`Estimated OpenAI cost: $${costs.usd} USD`);
+    }
   }
 }

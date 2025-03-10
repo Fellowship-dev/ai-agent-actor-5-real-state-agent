@@ -9,8 +9,8 @@ import { PPE_EVENT } from './ppe_events.js';
  * @throws Will throw an error if the model name is unknown.
  */
 export async function chargeForModelTokens(modelName: string, tokens: number) {
-  const tokensThousands = Math.ceil(tokens / 1000);
-  log.debug(`Charging for ${tokens} tokens (${tokensThousands} thousands) for model ${modelName}`);
+  const tokensK = Math.ceil(tokens / 1000);
+  log.debug(`Charging for ${tokens} tokens (${tokensK}k) for model ${modelName}`);
   let eventName: string = PPE_EVENT.GPT_4O;
   switch (modelName) {
   case 'gpt-4o-mini':
@@ -30,7 +30,7 @@ export async function chargeForModelTokens(modelName: string, tokens: number) {
     break;
   }
   await Actor.charge(
-    { eventName, count: tokensThousands }
+    { eventName, count: tokensK }
   );
 }
 
@@ -42,4 +42,27 @@ export async function chargeForActorStart() {
     const count = Math.ceil((Actor.getEnv().memoryMbytes || 1024) / 1024);
     await Actor.charge({ eventName: 'actor-start-gb', count });
   }
+}
+
+export async function chargeForToolUsage(toolName: string, count: number) {
+  log.debug(`Charging #${count} times for tool ${toolName}`);
+  let eventName: string = '';
+  switch (toolName) {
+  case 'duck_duck_go':
+    eventName = PPE_EVENT.DUCK_DUCK_GO;
+    break;
+  case 'website_scraper':
+    eventName = PPE_EVENT.WEBSITE_SCRAPER;
+    break;
+  case 'zillow_search':
+    eventName = PPE_EVENT.ZILLOW_SEARCH;
+    break;
+  case 'zip_code_search':
+    eventName = PPE_EVENT.ZIP_CODE_SEARCH;
+    break;
+  default:
+    eventName = '';
+    break;
+  }
+  await Actor.charge({ eventName, count });
 }

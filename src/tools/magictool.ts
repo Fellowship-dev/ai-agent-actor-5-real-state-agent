@@ -26,15 +26,14 @@ export class MagicTool extends Tool {
 
   constructor(fields?: MagicToolParams) {
     super(...arguments);
-    const log = fields?.log ?? console;
+    this.log = fields?.log ?? console;
     const apiKey = fields?.apiKey ?? process.env.SECRET_API_KEY ?? '';
     if (apiKey === undefined) {
-      log.debug(
+      this.log.debug(
         "Secret API key not set. You can set it as 'SECRET_API_KEY' in your environment variables."
       );
     }
     this.apiKey = apiKey;
-    this.log = log;
   }
 
   async _call(rawInput: string) {

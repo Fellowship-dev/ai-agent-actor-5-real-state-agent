@@ -1,9 +1,9 @@
 {
 	"actorSpecification": 1,
 	"name": "ai-real-state-agent",
-	"title": "Empty TypeScript project",
-	"description": "Empty project in TypeScript.",
-	"version": "0.0",
+	"title": "AI Real State Agent",
+	"description": "AI agent that uses a multi-agent approach to find you the best home recommendations using a natural language prompt.",
+	"version": "0.1",
 	"buildTag": "latest",
 	"meta": {
 		"templateId": "ts-empty"

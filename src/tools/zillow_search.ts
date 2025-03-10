@@ -1,6 +1,7 @@
 import { Log, ApifyClient } from 'apify';
 import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
+import { chargeForToolUsage } from '../utils/ppe_handler.js';
 
 /**
  * Interface for parameters required by ZillowSearch class.
@@ -30,10 +31,8 @@ export class ZillowSearch extends StructuredTool {
 
   constructor(fields?: ZillowSearchParams) {
     super(...arguments);
-    const log = fields?.log ?? console;
-    this.log = log;
-    const apifyClient = fields?.apifyClient ?? new ApifyClient();
-    this.apifyClient = apifyClient;
+    this.log = fields?.log ?? console;
+    this.apifyClient = fields?.apifyClient ?? new ApifyClient();
   }
 
   override async _call(arg: z.output<typeof this.schema>) {
@@ -55,9 +54,12 @@ export class ZillowSearch extends StructuredTool {
     const dataset = await this.apifyClient
       .dataset(actorRun.defaultDatasetId)
       .listItems();
-    const items = dataset.items.slice(0, 10); // return only the top 10 properties to avoid sending too much data
-    this.log.debug(`ZillowSearch response: ${JSON.stringify(items)}`);
-    return JSON.stringify(items);
+    await chargeForToolUsage(this.name, dataset.total);
+    // returns only the top 10 properties to avoid sending too much data
+    // NOTE: this tool could return the dataset-id and use another tool to read it
+    const cappedItems = dataset.items.slice(0, 10);
+    this.log.debug(`ZillowSearch response: ${JSON.stringify(cappedItems)}`);
+    return JSON.stringify(cappedItems);
   }
 }
 

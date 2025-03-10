@@ -1,0 +1,24 @@
+{
+  "actorSpecification": 1,
+  "views": {
+    "overview": {
+      "title": "Overview",
+      "transformation": {
+        "fields": ["actorName", "response"]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "actorName": {
+            "label": "Actor name",
+            "format": "text"
+          },
+          "response": {
+            "label": "Actor evaluation",
+            "format": "text"
+          }
+        }
+      }
+    }
+  }
+}

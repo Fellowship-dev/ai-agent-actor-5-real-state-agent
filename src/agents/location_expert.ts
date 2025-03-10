@@ -30,7 +30,7 @@ export class LocationExpertAgent {
   constructor(fields?: LocationExpertAgentParams) {
     this.log = fields?.log ?? console;
     this.apifyClient = fields?.apifyClient ?? new ApifyClient();
-    this.costHandler = new CostHandler(fields?.modelName ?? 'gpt-4o-mini');
+    this.costHandler = new CostHandler(fields?.modelName ?? 'gpt-4o-mini', this.log);
     const llm = new ChatOpenAI({
       model: fields?.modelName,
       apiKey: fields?.openaiApiKey,

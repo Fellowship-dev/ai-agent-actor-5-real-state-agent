@@ -1,6 +1,7 @@
 import { Log, ApifyClient } from 'apify';
 import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
+import { chargeForToolUsage } from '../utils/ppe_handler.js';
 
 /**
  * Interface for parameters required by WebsiteScraper class.
@@ -37,10 +38,8 @@ export class WebsiteScraper extends StructuredTool {
 
   constructor(fields?: WebsiteScraperParams) {
     super(...arguments);
-    const log = fields?.log ?? console;
-    this.log = log;
-    const apifyClient = fields?.apifyClient ?? new ApifyClient();
-    this.apifyClient = apifyClient;
+    this.log = fields?.log ?? console;
+    this.apifyClient = fields?.apifyClient ?? new ApifyClient();
   }
 
   override async _call(arg: z.output<typeof this.schema>) {
@@ -63,6 +62,7 @@ export class WebsiteScraper extends StructuredTool {
       .listItems();
     const { items } = dataset;
     this.log.debug(`WebsiteScraper response: ${JSON.stringify(items)}`);
+    await chargeForToolUsage(this.name, 1);
     return JSON.stringify(items);
   }
 }

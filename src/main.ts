@@ -3,6 +3,7 @@ import { Actor, ApifyClient, log } from 'apify';
 import { StateGraph, StateGraphArgs, START, END } from '@langchain/langgraph';
 import LocationExpertAgent from './agents/location_expert.js';
 import ResearcherAgent from './agents/researcher.js';
+import { chargeForActorStart } from './utils/ppe_handler.js';
 
 // if available, .env variables are loaded
 dotenv.config();
@@ -21,7 +22,7 @@ type Input = {
  * Actor initialization code
 */
 await Actor.init();
-// await chargeForActorStart();
+await chargeForActorStart();
 
 const userToken = Actor.getEnv().token;
 if (!userToken) {
@@ -32,11 +33,20 @@ if (!userToken) {
 const {
   instructions,
   modelName = 'gpt-4o-mini',
-  openaiApiKey = process.env.OPENAI_API_KEY,
+  openaiApiKey,
   debug,
 } = await Actor.getInput() as Input;
 if (debug) {
   log.setLevel(log.LEVELS.DEBUG);
+} else {
+  log.setLevel(log.LEVELS.INFO);
+}
+// if available, the Actor uses the user's openaiApiKey. Otherwise it charges for use.
+const tokenCostActive = (openaiApiKey ?? '').length === 0;
+if (tokenCostActive) {
+  log.info("No openaiApiKey was detected. You'll be charged for token usage.");
+} else {
+  log.info("Env openaiApiKey detected. You won't be charged for token usage.");
 }
 if (!instructions) {
   throw new Error('Instructions are required. Create an INPUT.json file in the `storage/key_value_stores/default` folder and add the respective keys.');
@@ -81,14 +91,13 @@ async function locationExpert(state: StateSchema) {
   const locationExpertAgent = new LocationExpertAgent({
     apifyClient,
     modelName,
-    openaiApiKey,
+    openaiApiKey: openaiApiKey ?? process.env.OPENAI_API_KEY,
     log,
   });
   const { agentExecutor, costHandler } = locationExpertAgent;
   const response = await agentExecutor.invoke({ input: state.instructions });
-  log.info(`locationExpert 🤖 : ${response.output}`);
-  const costs = costHandler.getTotalCost();
-  log.info(`Agent finished its work.`, { costUSD: costs.usd, tokens: costs.tokens });
+  log.debug(`locationExpert 🤖 : ${response.output}`);
+  await costHandler.logOrChargeForTokens(modelName, tokenCostActive);
   return { bestLocations: response.output };
 }
 
@@ -97,7 +106,7 @@ async function researcher(state: StateSchema) {
   const researcherAgent = new ResearcherAgent({
     apifyClient,
     modelName,
-    openaiApiKey,
+    openaiApiKey: openaiApiKey ?? process.env.OPENAI_API_KEY,
     log,
   });
   const { agentExecutor, costHandler } = researcherAgent;
@@ -108,8 +117,7 @@ async function researcher(state: StateSchema) {
     + `'${state.bestLocations}'\n\n`
     + 'Please answer the user accordingly.';
   const response = await agentExecutor.invoke({ input });
-  const costs = costHandler.getTotalCost();
-  log.info(`Agent finished its work.`, { costUSD: costs.usd, tokens: costs.tokens });
+  await costHandler.logOrChargeForTokens(modelName, tokenCostActive);
   return { output: response.output };
 }
 
@@ -126,6 +134,11 @@ const response = await runnable.invoke(
   { configurable: { thread_id: 42 } }, // this line shows that the agent can be thread-aware
 );
 
-log.info(`Agent 🤖 : ${response.output}`);
+log.debug(`Agent 🤖 : ${response.output}`);
+
+await Actor.pushData({
+  actorName: 'AI Real State Agent',
+  response: response.output,
+});
 
 await Actor.exit();
