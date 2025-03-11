@@ -1,4 +1,5 @@
 import { Log, ApifyClient } from 'apify';
+import { createHash } from 'crypto';
 import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { chargeForToolUsage } from '../utils/ppe_handler.js';
@@ -54,18 +55,43 @@ export class DuckDuckGo extends StructuredTool {
       maximum: arg.maximum ?? 5,
       timeout: 30
     };
-    this.log.debug(
-      `Calling DuckDuckGo with input: ${JSON.stringify(actorInput)}`
-    );
-    const actorRun = await this.apifyClient
-      .actor('canadesk/duckduckgo-serp-api')
-      .call(actorInput);
-    const dataset = await this.apifyClient
-      .dataset(actorRun.defaultDatasetId)
-      .listItems();
+    // checks for cached stored version
+    const key = JSON.stringify(actorInput);
+    const algorithm = 'sha256';
+    const digest = createHash(algorithm).update(key).digest('hex').slice(0, 16);
+    const { username } = await this.apifyClient.user().get();
+    const today = new Date().toISOString().slice(0, 10);
+    const datasetName = `${today}-${digest}`;
+    this.log.debug(`Searching for datasetId: ${username}/${datasetName}`);
+    const existingDataset = await this.apifyClient
+      .dataset(`${username}/${datasetName}`)
+      .get();
+    this.log.debug(`Found existingDataset? ${existingDataset}`);
+    let dataset;
+    if (existingDataset) {
+      this.log.debug(
+        `Cached response found for: ${JSON.stringify(actorInput)}`
+      );
+      dataset = await this.apifyClient
+        .dataset(`${username}/${datasetName}`)
+        .listItems();
+    } else {
+      this.log.debug(
+        `Calling DuckDuckGo with input: ${JSON.stringify(actorInput)}`
+      );
+      const actorRun = await this.apifyClient
+        .actor('canadesk/duckduckgo-serp-api')
+        .call(actorInput);
+      dataset = await this.apifyClient
+        .dataset(actorRun.defaultDatasetId)
+        .listItems();
+      await this.apifyClient
+        .dataset(actorRun.defaultDatasetId)
+        .update({ name: datasetName });
+      await chargeForToolUsage(this.name, 1);
+    }
     const { items } = dataset;
     this.log.debug(`DuckDuckGo response: ${JSON.stringify(items)}`);
-    await chargeForToolUsage(this.name, 1);
     return JSON.stringify(items);
   }
 }

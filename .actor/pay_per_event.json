@@ -14,7 +14,7 @@
     "eventDescription": "Flat fee for every 1000 tokens (input/output) used with gpt-4o-mini.",
     "eventPriceUsd": 0.0006
   },
-  "openai-1000-tokens-gpt-3.5-turbo": {
+  "openai-1000-tokens-gpt-3-5-turbo": {
     "eventTitle": "Price per 1000 OpenAI tokens for gpt-3.5-turbo",
     "eventDescription": "Flat fee for every 1000 tokens (input/output) used with gpt-3.5-turbo.",
     "eventPriceUsd": 0.0015

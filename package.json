@@ -11,6 +11,7 @@
     "@langchain/langgraph": "^0.2.54",
     "@langchain/openai": "^0.4.4",
     "apify": "^3.3.2",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "langchain": "^0.3.19",
     "zod": "^3.24.2"

@@ -1,4 +1,5 @@
 import { Log, ApifyClient } from 'apify';
+import { createHash } from 'crypto';
 import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { chargeForToolUsage } from '../utils/ppe_handler.js';
@@ -45,21 +46,42 @@ export class ZillowSearch extends StructuredTool {
       sold: false,
       zipCodes: arg.zipCodes,
     };
-    this.log.debug(
-      `Calling ZillowSearch with input: ${JSON.stringify(actorInput)}`
-    );
-    const actorRun = await this.apifyClient
-      .actor('maxcopell/zillow-zip-search')
-      .call(actorInput);
-    const dataset = await this.apifyClient
-      .dataset(actorRun.defaultDatasetId)
-      .listItems();
-    await chargeForToolUsage(this.name, dataset.total);
-    // returns only the top 10 properties to avoid sending too much data
-    // NOTE: this tool could return the dataset-id and use another tool to read it
-    const cappedItems = dataset.items.slice(0, 10);
-    this.log.debug(`ZillowSearch response: ${JSON.stringify(cappedItems)}`);
-    return JSON.stringify(cappedItems);
+    // checks for cached stored version
+    const key = JSON.stringify(actorInput);
+    const algorithm = 'sha256';
+    const digest = createHash(algorithm).update(key).digest('hex').slice(0, 16);
+    const { username } = await this.apifyClient.user().get();
+    const today = new Date().toISOString().slice(0, 10);
+    const datasetName = `${today}-${digest}`;
+    // const datasetName = '2025-03-11-37d909c75952bc93'; //DEBUG
+    this.log.debug(`Searching for datasetId: ${username}/${datasetName}`);
+    const existingDataset = await this.apifyClient
+      .dataset(`${username}/${datasetName}`)
+      .get();
+    this.log.debug(`Found existingDataset? ${existingDataset}`);
+    let totalItems = existingDataset?.itemCount;
+    if (existingDataset) {
+      this.log.debug(
+        `Cached response found for: ${JSON.stringify(actorInput)}`
+      );
+    } else {
+      this.log.debug(
+        `Calling ZillowSearch with input: ${JSON.stringify(actorInput)}`
+      );
+      const actorRun = await this.apifyClient
+        .actor('maxcopell/zillow-zip-search')
+        .call(actorInput);
+      await this.apifyClient
+        .dataset(actorRun.defaultDatasetId)
+        .update({ name: datasetName });
+      const dataset = await this.apifyClient
+        .dataset(actorRun.defaultDatasetId)
+        .listItems();
+      totalItems = dataset.total;
+      await chargeForToolUsage(this.name, dataset.total);
+    }
+    this.log.debug(`ZillowSearch response: ${username}/${datasetName}`);
+    return `Results for Zillow Search can be found in dataset with id '${username}/${datasetName}'. This dataset contains ${totalItems} items in total.`;
   }
 }
 
