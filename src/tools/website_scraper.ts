@@ -29,7 +29,7 @@ export class WebsiteScraper extends StructuredTool {
 
   name = 'website_scraper';
 
-  description = 'Scrapes a URL aiming the search based on a method (for example: getAllItems) and returns a stringified JSON with the results using the specified output format (for example: {"results":[""]}).';
+  description = 'Scrapes a URL and then performs a search based on a specified method (for example: getAllItems) and returns a stringified JSON with the results using the default output format (for example: {"results":[""]}).';
 
   schema = z.object({
     url: z.string(),
@@ -87,11 +87,11 @@ export class WebsiteScraper extends StructuredTool {
           .dataset(actorRun.defaultDatasetId)
           .update({ name: datasetName });
       }
+      await chargeForToolUsage(this.name, 1);
     }
     const { items } = dataset;
     this.log.debug(`WebsiteScraper response: ${JSON.stringify(items)}`);
-    await chargeForToolUsage(this.name, 1);
-    return JSON.stringify(items);
+    return `Scraped ${arg.url}, ran the method ${arg.method} on the content and obtained: ${JSON.stringify(items)}`;
   }
 }
 

@@ -21,15 +21,10 @@ type Input = {
 }
 
 /**
- * Actor initialization code
+ * Actor initialization code and initial charge
 */
 await Actor.init();
 await chargeForActorStart();
-
-const userToken = Actor.getEnv().token;
-if (!userToken) {
-  throw new Error('User token is required. Use `apify login` and export your secret as APIFY_TOKEN.');
-}
 
 // Handle and validate input
 const {
@@ -55,6 +50,10 @@ if (!instructions) {
 }
 
 // Apify is used to call tools and manage datasets
+const userToken = process.env.USER_APIFY_TOKEN;
+if (!userToken) {
+  throw new Error('User token is required. Export your Apify secret as USER_APIFY_TOKEN.');
+}
 const apifyClient = new ApifyClient({
   token: userToken,
 });
@@ -96,7 +95,7 @@ const graphState: StateGraphArgs<StateSchema>['channels'] = {
   },
   itemsChecked: {
     value: (x?: number, y?: number) => y ?? x ?? 0,
-    default: () => 100, // DEBUG
+    default: () => 0,
   },
   recommendations: {
     value: (x?: string[], y?: string[]) => y ?? x ?? [],

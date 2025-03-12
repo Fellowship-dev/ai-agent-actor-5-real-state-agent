@@ -50,61 +50,63 @@ The following fields are recommeded to start using the AI Real State Agent:
 Upon successful execution, the expected output will resemble the following markdown format:
 
 ```
-I found several properties in Miami that match your criteria of buying a house with a pool for less than $1 million. Here are the assumptions I made based on your request:
+Sure! I’ve carefully reviewed a total of **600 properties** in Miami that meet your criteria of having a pool and being priced under $1 million. After thorough consideration, I’ve selected the **top 5 properties** that I believe would be great options for you. Here they are:
 
-1. You are looking to **buy** a property (as specified).
-2. The **maximum price** is set to **$1,000,000** (as specified).
-3. The **minimum price** is set to **$1** (as you did not specify).
-4. The properties are located in the **ZIP Codes**: 33431, 33131, and 33146.
+### 1. 4074 NW 4th St, Miami, FL 33126
+- **Price:** $685,000
+- **Beds:** 2
+- **Baths:** 2
+- **Area:** 1,506 sqft
+- **Amenities:** Above ground pool
+- **Broker:** One Stop Realty
+- [View More Information](https://www.zillow.com/homedetails/4074-NW-4th-St-Miami-FL-33126/43843031_zpid/)
+![4074 NW 4th St](https://photos.zillowstatic.com/fp/729827e11f99fcf615a5ae1ac54b64e5-p_e.jpg)
 
-Here are the top 5 properties I found:
+### 2. 4001 NW 3rd St, Miami, FL 33126
+- **Price:** $820,000
+- **Beds:** 2
+- **Baths:** 1
+- **Area:** 1,908 sqft
+- **Broker:** Belhouse Real Estate, LLC
+- [View More Information](https://www.zillow.com/homedetails/4001-NW-3rd-St-Miami-FL-33126/43843020_zpid/)
+![4001 NW 3rd St](https://photos.zillowstatic.com/fp/100c46f02d0c80d2bd66d95ab34dc6b6-p_e.jpg)
 
-1. **1408 Brickell Bay Dr #1415 & 1416, Miami, FL 33131**
-   - **Price:** $700,000
-   - **Beds:** 3
-   - **Baths:** 3
-   - **Area:** 1711 sqft
-   - **Details:** [View Listing](https://www.zillow.com/homedetails/1408-Brickell-Bay-Dr-1415-1416-Miami-FL-33131/442183953_zpid/)
-   - ![Image](https://photos.zillowstatic.com/fp/a6d02532e56048b53b765e42fafd5ee6-p_e.jpg)
+### 3. 4621 NW 4th St, Miami, FL 33126
+- **Price:** $699,000
+- **Beds:** 5
+- **Baths:** 2
+- **Area:** 2,157 sqft
+- **Broker:** Lifestyle International Realty
+- [View More Information](https://www.zillow.com/homedetails/4621-NW-4th-St-Miami-FL-33126/43843819_zpid/)
+![4621 NW 4th St](https://photos.zillowstatic.com/fp/24a50d849b5572e3866469eab49d29a0-p_e.jpg)
 
-2. **701 Brickell Key Blvd APT 507, Miami, FL 33131**
-   - **Price:** $480,000
-   - **Beds:** 1
-   - **Baths:** 2
-   - **Area:** 992 sqft
-   - **Details:** [View Listing](https://www.zillow.com/homedetails/701-Brickell-Key-Blvd-APT-507-Miami-FL-33131/70776091_zpid/)
-   - ![Image](https://photos.zillowstatic.com/fp/939b6b5b47862d859db20932e146b98d-p_e.jpg)
+### 4. 1642 SW 84th Ct, Miami, FL 33155
+- **Price:** $995,000
+- **Beds:** 4
+- **Baths:** 2
+- **Area:** 1,890 sqft
+- **Amenities:** Big carport
+- [View More Information](https://www.zillow.com/homedetails/1642-SW-84th-Ct-Miami-FL-33155/44183450_zpid/)
+![1642 SW 84th Ct](https://photos.zillowstatic.com/fp/3b3d652f1d86778418faa0d38edf007c-p_e.jpg)
 
-3. **1430 Brickell Bay Dr APT 504, Miami, FL 33146**
-   - **Price:** $475,000
-   - **Beds:** 2
-   - **Baths:** 2
-   - **Area:** 1230 sqft
-   - **Details:** [View Listing](https://www.zillow.com/homedetails/1430-Brickell-Bay-Dr-APT-504-Miami-FL-33146/43871277_zpid/)
-   - ![Image](https://photos.zillowstatic.com/fp/7d33c68d60fc1dc7f1c6fa242f31df24-p_e.jpg)
+### 5. 11431 SW 48th St, Miami, FL 33165
+- **Price:** $950,000
+- **Beds:** 4
+- **Baths:** 3
+- **Area:** 2,122 sqft
+- **Amenities:** Beautiful pool
+- **Broker:** Casa Simple LLC
+- [View More Information](https://www.zillow.com/homedetails/11431-SW-48th-St-Miami-FL-33165/44200045_zpid/)
+![11431 SW 48th St](https://photos.zillowstatic.com/fp/94ad67f6010bcbfbaca74e829608d5c9-p_e.jpg)
 
-4. **485 Brickell Ave APT 4506, Miami, FL 33431**
-   - **Price:** $695,000
-   - **Beds:** 1
-   - **Baths:** 1
-   - **Area:** 842 sqft
-   - **Details:** [View Listing](https://www.zillow.com/homedetails/485-Brickell-Ave-APT-4506-Miami-FL-33431/92439407_zpid/)
-   - ![Image](https://photos.zillowstatic.com/fp/cba657e0760168def02228f5a05c398d-p_e.jpg)
-
-5. **1000 Brickell Plz #4314, Miami, FL 33131**
-   - **Price:** $875,000
-   - **Beds:** 1
-   - **Baths:** 2
-   - **Area:** 870 sqft
-   - **Details:** [View Listing](https://www.zillow.com/homedetails/1000-Brickell-Plz-4314-Miami-FL-33131/331696313_zpid/)
-   - ![Image](https://photos.zillowstatic.com/fp/c4788dc10431e8c1be99fc77b7d54256-p_e.jpg)
+---
 
 ### Why I Chose These Properties:
-- **Diversity in Size and Price:** The properties range from $480,000 to $875,000, providing options for different budgets while still being under the $1 million cap.
-- **Location:** All properties are located in desirable areas of Miami, known for their amenities and lifestyle.
-- **Pool Access:** Each property has access to a pool, aligning with your request for a home with this feature.
+- **Diversity in Size and Price:** The selected properties range from 2 to 5 bedrooms and vary in price, ensuring options for different needs and budgets.
+- **Pool Availability:** All properties have a pool, which is a key requirement you specified.
+- **Location:** These homes are located in various neighborhoods within Miami, providing a good mix of options.
 
-If you would like more information or to explore other options, feel free to ask!
+If you have any further questions or would like to schedule a viewing for any of these properties, feel free to reach out!
 ```
 
 ## FAQ

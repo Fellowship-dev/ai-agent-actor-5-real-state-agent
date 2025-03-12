@@ -1,7 +1,7 @@
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      APIFY_TOKEN: string;
+      USER_APIFY_TOKEN: string;
       LANGSMITH_TRACING: string;
       LANGSMITH_ENDPOINT: string;
       LANGSMITH_API_KEY: string;

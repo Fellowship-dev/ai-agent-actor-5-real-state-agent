@@ -10,7 +10,7 @@
   },
   "environmentVariables": {
     "OPENAI_API_KEY": "@defaultOpenaiApiKey",
-    "APIFY_TOKEN": "@defaultApifyToken"
+    "USER_APIFY_TOKEN": "@defaultApifyToken"
   },
   "dockerfile": "./Dockerfile",
   "input": "./input_schema.json",

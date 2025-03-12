@@ -44,7 +44,7 @@ export class ZillowSearch extends StructuredTool {
       priceMax: arg.maximumPrice,
       priceMin: arg.minimumPrice,
       sold: false,
-      zipCodes: arg.zipCodes,
+      zipCodes: arg.zipCodes.slice(0, 3),
     };
     // checks for cached stored version
     const key = JSON.stringify(actorInput);
