@@ -1,7 +1,7 @@
 {
   "actorSpecification": 1,
   "name": "ai-real-state-agent",
-  "version": "0.1",
+  "version": "0.2",
   "buildTag": "latest",
   "title": "AI Real State Agent",
   "description": "AI agent that uses a multi-agent approach to find you the best home recommendations using a natural language prompt.",

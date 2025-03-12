@@ -24,13 +24,13 @@ The **AI Real State Agent** is designed to assist users in finding their perfect
 ## Pricing Explanation
 The AI Real State Agent uses a **PAY PER EVENT** pricing model. Below are some of the key pricing structures:
 
-| Event                                      | Description                                               | Price (USD) |
-|
-| Actor start per 1 GB                       | Flat fee for starting an Actor run for each 1 GB of memory.| $0.01       |
-| Price per 1000 OpenAI tokens for gpt-4o   | Flat fee for every 1000 tokens (input/output) used with gpt-4o.| $0.01      |
-| Price per web page scraped                 | Flat fee for every web page scraped.                      | $0.01       |
-| Price per Duck Duck Go search              | Flat fee for every Duck Duck Go search.                   | $0.01       |
-| Price per result when searching Zillow     | Flat fee for every result when searching Zillow.          | $0.002      |
+| Event | Description | Price (USD) |
+| --- | --- | --- |
+| Actor start per 1 GB | Flat fee for starting an Actor run for each 1 GB of memory.| $0.01 |
+| Price per 1000 OpenAI tokens for gpt-4o | Flat fee for every 1000 tokens (input/output) used with gpt-4o.| $0.01 |
+| Price per web page scraped | Flat fee for every web page scraped. | $0.01 |
+| Price per Duck Duck Go search | Flat fee for every Duck Duck Go search. | $0.01 |
+| Price per result when searching Zillow | Flat fee for every result when searching Zillow. | $0.002 |`
 
 ## Input Requirements
 The following fields are recommeded to start using the AI Real State Agent:
@@ -44,7 +44,7 @@ The following fields are recommeded to start using the AI Real State Agent:
 ```
 
 ## AI Agent Flow Chart
-![Mermaid Flow Chart](mermaid.png)
+![Mermaid Flow Chart](https://github.com/Fellowship-dev/ai-agent-actor-5-real-state-agent/blob/main/mermaid.png?raw=true)
 
 ## Expected Output
 Upon successful execution, the expected output will resemble the following markdown format:
