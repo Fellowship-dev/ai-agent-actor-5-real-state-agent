@@ -8,6 +8,7 @@ The **AI Real State Agent** is designed to assist users in finding their perfect
 - Integration with OpenAI's advanced models for natural language understanding.
 - Supports multiple GPT models based on user preference.
 - Uses cache based on input to reduce time and cost of tool usage.
+- Leverages LangGraph nodes to perform multiple commands without exceeding the token limit.
 
 ### Supported tools by AI Agent
 - Explores Apify Datasets using pagination (to avoid excessive token usage)
@@ -41,6 +42,9 @@ The following fields are recommeded to start using the AI Real State Agent:
   "model": "gpt-4o-mini"
 }
 ```
+
+## AI Agent Flow Chart
+![Mermaid Flow Chart](mermaid.png)
 
 ## Expected Output
 Upon successful execution, the expected output will resemble the following markdown format:

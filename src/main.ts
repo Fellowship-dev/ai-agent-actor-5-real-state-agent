@@ -123,7 +123,6 @@ async function locationNode(state: StateSchema) {
 }
 
 async function zillowNode(state: StateSchema) {
-  console.log('ZillowAgent State: ', state) // DEBUG
   const zillowAgent = new ZillowAgent({
     apifyClient,
     modelName,
@@ -145,7 +144,6 @@ async function zillowNode(state: StateSchema) {
 }
 
 async function propertyNode(state: StateSchema) {
-  console.log('PropertyAgent State: ', state) // DEBUG
   const propertyAgent = new PropertyAgent({
     apifyClient,
     modelName,
@@ -175,8 +173,26 @@ async function propertyNode(state: StateSchema) {
   };
 }
 
+const propertiesCheckedRouter = (state: StateSchema) => {
+  const allResultsChecked = state.itemsChecked >= state.totalItems;
+  log.debug(`allResultsChecked: ${allResultsChecked}`);
+  const thousandResultsChecked = state.itemsChecked > 1000;
+  log.debug(`thousandResultsChecked: ${thousandResultsChecked}`);
+  const fifteenRecommendationsFound = state.recommendations.length > 15;
+  log.debug(`fifteenRecommendationsFound: ${fifteenRecommendationsFound}`);
+  if (
+    allResultsChecked
+    || thousandResultsChecked
+    || fifteenRecommendationsFound
+  ) {
+    // if any of the above criteria are met, it passes the ball to the successAgent
+    return 'success';
+  }
+  // if none of the above criteria are met, it runs the same node again
+  return 'property';
+};
+
 async function successNode(state: StateSchema) {
-  console.log('SuccessAgent State: ', state) // DEBUG
   const successAgent = new SuccessAgent({
     apifyClient,
     modelName,
@@ -210,11 +226,11 @@ const graph = new StateGraph({ channels: graphState })
   .addEdge(START, 'location')
   .addEdge('location', 'zillow')
   .addEdge('zillow', 'property')
-  // .addEdge('property', 'property') //conditional?
-  .addEdge('property', 'success') //conditional?
+  .addConditionalEdges('property', propertiesCheckedRouter)
   .addEdge('success', END);
 
 const runnable = graph.compile();
+
 const response = await runnable.invoke(
   { input: instructions },
   { configurable: { thread_id: 42 } }, // this line shows that the agent can be thread-aware

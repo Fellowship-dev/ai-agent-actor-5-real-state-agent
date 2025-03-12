@@ -73,7 +73,8 @@ export class PropertyAgent {
         + 'Remember: do not call the DatasetExplorer tool more than once, or you will die. \n\n'
         + 'The user may have specified other requests like pets, pool, beds, baths, sqft, gym, etc. '
         + 'Filter the results based on this information or notify the user if you are unable to do so. '
-        + 'Use your expertise to recommend the best 5 properties that you can find that matches the user criteria. '
+        + 'Use your expertise to recommend the best properties that you can find that matches the user criteria. '
+        + 'If the total amount of items (totalItems) is over 100, select up to 3 properties otherwise pick up to 5. Try to at least pick one. '
         + "As your response, return only a JSON object (and nothing more! not even a ```json or ``` wrapper) with the key 'itemsChecked' as a number with the amount of properties that you received from the dataset_explorer and the key 'recommendations' with your recommendations in JSON format, using the same fields that you specified when calling the dataset_explorer."
       ],
       ['placeholder', '{chat_history}'],

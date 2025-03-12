@@ -52,8 +52,8 @@ export class ZillowSearch extends StructuredTool {
     const digest = createHash(algorithm).update(key).digest('hex').slice(0, 16);
     const { username } = await this.apifyClient.user().get();
     const today = new Date().toISOString().slice(0, 10);
-    // const datasetName = `${today}-${digest}`;
-    const datasetName = '2025-03-11-37d909c75952bc93'; //DEBUG
+    const datasetName = `${today}-${digest}`;
+    // const datasetName = '2025-03-11-37d909c75952bc93'; //DEBUG
     this.log.debug(`Searching for datasetId: ${username}/${datasetName}`);
     const existingDataset = await this.apifyClient
       .dataset(`${username}/${datasetName}`)
