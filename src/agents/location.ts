@@ -9,9 +9,9 @@ import WebsiteScraper from '../tools/website_scraper.js';
 import { CostHandler } from '../utils/cost_handler.js';
 
 /**
- * Interface for parameters required by LocationExpertAgent class.
+ * Interface for parameters required by LocationAgent class.
  */
-export interface LocationExpertAgentParams {
+export interface LocationAgentParams {
   apifyClient: ApifyClient,
   modelName: string,
   openaiApiKey: string,
@@ -19,15 +19,15 @@ export interface LocationExpertAgentParams {
 }
 
 /**
- * Tool that uses the MagicTool function. This is an example function to use as template.
+ * AI Agent that takes the user input and finds the best Zip Codes in a city to live in.
  */
-export class LocationExpertAgent {
+export class LocationAgent {
   protected log: Log | Console;
   protected apifyClient: ApifyClient;
   public agentExecutor: AgentExecutor;
   public costHandler: CostHandler;
 
-  constructor(fields?: LocationExpertAgentParams) {
+  constructor(fields?: LocationAgentParams) {
     this.log = fields?.log ?? console;
     this.apifyClient = fields?.apifyClient ?? new ApifyClient();
     this.costHandler = new CostHandler(fields?.modelName ?? 'gpt-4o-mini', this.log);
@@ -94,4 +94,4 @@ export class LocationExpertAgent {
   }
 }
 
-export default LocationExpertAgent;
+export default LocationAgent;

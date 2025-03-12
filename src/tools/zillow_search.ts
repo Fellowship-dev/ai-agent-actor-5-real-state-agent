@@ -21,7 +21,7 @@ export class ZillowSearch extends StructuredTool {
 
   name = 'zillow_search';
 
-  description = 'Searches for properties on Zillow based on a list of Zip Codes (at least one) and returns a stringified JSON with the results.';
+  description = 'Searches for properties on Zillow based on a list of Zip Codes (at least one) and returns an Apify datasetId to explore the results.';
 
   schema = z.object({
     zipCodes: z.string().array(),
@@ -52,8 +52,8 @@ export class ZillowSearch extends StructuredTool {
     const digest = createHash(algorithm).update(key).digest('hex').slice(0, 16);
     const { username } = await this.apifyClient.user().get();
     const today = new Date().toISOString().slice(0, 10);
-    const datasetName = `${today}-${digest}`;
-    // const datasetName = '2025-03-11-37d909c75952bc93'; //DEBUG
+    // const datasetName = `${today}-${digest}`;
+    const datasetName = '2025-03-11-37d909c75952bc93'; //DEBUG
     this.log.debug(`Searching for datasetId: ${username}/${datasetName}`);
     const existingDataset = await this.apifyClient
       .dataset(`${username}/${datasetName}`)
