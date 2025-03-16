@@ -1,3 +1,5 @@
+[![Actor AI Real State Agent](https://apify.com/actor-badge?actor=maxfindel/ai-real-state-agent)](https://apify.com/maxfindel/ai-real-state-agent)
+
 # AI Real State Agent
 
 ## Introduction
