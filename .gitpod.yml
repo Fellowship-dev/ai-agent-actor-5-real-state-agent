@@ -1,4 +1,4 @@
-image: gitpod/workspace-base:latest
+image: gitpod/workspace-full:latest
 tasks:
   - name: main
     init: >
