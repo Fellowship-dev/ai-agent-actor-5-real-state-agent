@@ -70,7 +70,7 @@ export class ZillowSearch extends StructuredTool {
       );
       const actorRun = await this.apifyClient
         .actor('maxcopell/zillow-zip-search')
-        .call(actorInput);
+        .call(actorInput, { maxItems: 1000 });
       await this.apifyClient
         .dataset(actorRun.defaultDatasetId)
         .update({ name: datasetName });
